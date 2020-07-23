@@ -1,0 +1,172 @@
+require softwares
+
+---------------(manually download install n set path to the system enviroment)------------------------
+
+jdk   https://drive.google.com/file/d/1S3x5NQrmhC7N7328gxWvy9iUonjSsccP/view?usp=sharing
+jre   https://drive.google.com/file/d/1J44Axwh7Mh-le_MYhZkZNocG1cwdgmzy/view?usp=sharing
+mysql  https://drive.google.com/file/d/1xuZlEt1OJVObCilmUu_NnCJ2ylxlez2B/view?usp=sharing
+maven   https://drive.google.com/file/d/1VfiUfqbLXWUGjaQQE-MQSg-Wd1wQFf-v/view?usp=sharing
+
+(add on) given 
+mysql connector 8.0.18 
+simple json 1.1.1    
+
+
+------------------------------------------------------------- This readme file is only for Customer ------------------------------------------------------------------
+
+mvn archetype:generate -DarchetypeArtifactId=jersey-quickstart-grizzly2 -DarchetypeGroupId=org.glassfish.jersey.archetypes -DinteractiveMode=false -DgroupId=mybank -DartifactId=Customer(service name) -Dpackage=mybank -DarchetypeVersion=2.17
+
+it automatically build the service
+(open folder)
+
+edit ->pom.xml -> change 1.7 to 1.8
+
+mvn clean compile
+
+mvn exec:java
+(showing got it)
+
+-----------------------------------------------------(add)-------------------------------------
+<dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.18</version>       
+        </dependency>
+		
+		<!-- https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple -->
+		<dependency>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+		
+		<dependency>
+            <groupId>mysql</groupId>
+            <artifactId>jdatabase</artifactId>
+            <version>1.0</version>       
+        </dependency>
+----------------------------------------------------------------------------------------------- 
+copy n paste frome jdatabase folder dbconfig_costomer.json ,dbsql and serviceCommmon
+Also, Copy dbconfig_customer.json in the folder where mybankservice is.
+
+also copy mybankwebsite
+
+copy and paste "C:\ProgramData\Mysql\server 8.0\tcustomer.csv"
+
+copy n paste "create_customer_database.sql" into jdatabase folder
+
+add "json-simple-1.1.1.jar" & "mysql-connector-java-8.0.18.jar"
+
+mvn install:install-file -Dfile=C:\Cloud\database\mysql-connector-java-8.0.18.jar -DgroupId=mysql -DartifactId=mysql-connector-java -Dversion=8.0.18 -Dpackaging=jar -DgeneratePom=true
+
+mvn install:install-file -Dfile=C:\Cloud\database\json-simple-1.1.1.jar -DgroupId=com.googlecode.json-simple -DartifactId=json-simple -Dversion=1.1.1 -Dpackaging=jar -DgeneratePom=true
+
+(database create bye sql file)>mysql –u root –p < create_customer_database.sql
+
+Cloud(home)>javac -cp "json-simple-1.1.1.jar";"mysql-connector-java-8.0.18.jar"; jdatabase\*.java
+
+java -cp "json-simple-1.1.1.jar";"mysql-connector-java-8.0.18.jar"; jdatabase.dbsql
+
+jar cvf jdatabase.jar ./jdatabase/*.class json-simple-1.1.1.jar mysql-connector-java-8.0.18.jar
+
+mybankservice->mvn install:install-file -Dfile=jdatabase->mysql –u root –p < create_customer_database.sql
+\jdatabase.jar -DgroupId=mysql -DartifactId=jdatabase -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
+
+copy n paste maincustomer.java & svcCustomer.java file n paste into mybank n delete existing files
+
+Open the "svcCustomer.java" file and edit the dbsql constructor to - 
+ public svcCustomer(){
+	db = new dbsql(dbID); //create the database object  
+  }
+
+edit ->pom.xml -> <configuration>
+                    <mainClass>mybank.mainCustomer</mainClass>
+                </configuration>
+
+mvn clean compile exec:java
+
+=======================================================================(for multi service)=====================================================================================
+
+Open the "svcCustomer.java" file and edit the dbsql constructor to - 
+ public svcCustomer(){
+  int dbID = 0 ; // for 1 sercive provide key for storing values
+	db = new dbsql(dbID); //create the database object  
+  }
+ 
+ 
+ and and modify also in "dbsql.java" file
+ 
+ ========================================================================(with EventClient)===================================================================================
+ 
+add into all services "POM.xml" file
+ 
+  <dependency>
+            <groupId>myevent</groupId>
+            <artifactId>jevent</artifactId>
+            <version>1.0</version>     
+        </dependency>
+    </dependencies>
+    
+ ------------------------------------(svcCustomer)--------------
+ //common bank database object
+import jdatabase.*;
+import jevent.*;
+
+ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+ 
+ @Path("customer")
+public class svcCustomer {
+  
+  public String data;
+  public dbsql db;
+  public String query;
+  public jeventClient eventclient;
+  
+-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+ 
+public svcCustomer(){
+  	int dbID = 0;
+	db = new dbsql(dbID); //create the database object  
+    eventclient = new jeventClient("customer");
+  } 
+ 
+ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+ 
+ System.out.println("svcCustomer executequery result=" + jsonresult);
+
+			eventclient.sendEvent(data);
+      
+ -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=          
+      
+   @Produces(MediaType.TEXT_PLAIN)
+    public String getIt() {
+        return "<h2>Welcome to MyBank Customer service</h2>";
+    }
+     public void sendEvent(String eventdata)
+	{
+			//connect to event service
+			//send event to event sync
+			eventclient.sendEvent(eventdata);
+		
+	}
+	
+	//sync the event locally as received from event synchronizer
+	@POST
+	@Path("/syncevent")
+	@Produces({ "application/json" })
+	@Consumes({ "application/json" })
+	public void syncEvent(String eventdata) {
+		eventclient.syncEvent(eventdata, db);
+	}
+}
+      
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
