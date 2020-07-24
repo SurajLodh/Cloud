@@ -69,8 +69,7 @@ java -cp "json-simple-1.1.1.jar";"mysql-connector-java-8.0.18.jar"; jdatabase.db
 
 jar cvf jdatabase.jar ./jdatabase/*.class json-simple-1.1.1.jar mysql-connector-java-8.0.18.jar
 
-mybankservice->mvn install:install-file -Dfile=jdatabase->mysql –u root –p < create_customer_database.sql
-\jdatabase.jar -DgroupId=mysql -DartifactId=jdatabase -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
+mybankservice-mvn install:install-file -Dfile=C:\Deepak\jdatabase.jar -DgroupId=mysql -DartifactId=jdatabase -Dversion=1.0 -Dpackaging=jar -DgeneratePom=true
 
 copy n paste maincustomer.java & svcCustomer.java file n paste into mybank n delete existing files
 
