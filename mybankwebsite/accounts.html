@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>MYBANK ACCOUNT</title>
+  <title>ACCOUNT(8082)</title>
   <meta charset="utf-8">
+
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <script src="./scripts/angular.1.7.8.js"></script>
@@ -17,16 +18,21 @@
   <body ng-app="_mybankAPIgateway" ng-controller="_mybankAPIgatewayController">
 </div>
 
-<form id="frm" name="frm">
+<form id="frm" name="frm" style="background-image: url(https://images.pexels.com/photos/3943714/pexels-photo-3943714.jpeg);
+    min-height: 580px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;">
 			
 			<div class="container text-center">
 				
-				<hr>
-				Account ID: &nbsp;<input id="accountid" type="text" name="accountid" ng-model="form.account._ID" />&nbsp;&nbsp;
+				<hr><div class="row">
+				<div class="col"><input id="accountid" type="text" class="form-control" placeholder="Account ID" name="accountid" ng-model="form.account._ID"></div>&nbsp;
+				<div class="col"><input id="accountname" type="text" class="form-control" placeholder="Account Name" name="accountname" ng-model="form.account.name" ></div>&nbsp;
+				<div class="col"><input id="accountbalance" type="text" class="form-control" placeholder="Amount" name="accountbalance" ng-model="form.account.balance" ></div>&nbsp;
 
-				Account Name: &nbsp;<input id="accountname" type="text" name="accountname" ng-model="form.account.name" />&nbsp;&nbsp;
-
-				Amount: &nbsp;<input id="accountbalance" type="text" name="accountbalance" ng-model="form.account.balance" />&nbsp;&nbsp;
+            </div>
 				<hr>
 				<br>
 				<button name="btnselect" ng-click="data.account.selectquery();"class="btn btn-primary">Read</button>
@@ -43,22 +49,22 @@
 	<hr>
 	
 	<div align=center>
-		<br><b>ACCOUNT LIST</b>
+		<br><b style="color: red ! important";>ACCOUNT LIST</b>
 		<br>
 
 		<table align="center">
 		
 			<tr>
-				<td align="center">ID</td>&nbsp;
-				<td align="center">ACCOUNT NAME</td>&nbsp;
-				<td align="center">BALANCE</td>&nbsp;
+				<td class="table-primary" align="center">ID</td>&nbsp;
+				<td class="table-success" align="center">ACCOUNT NAME</td>&nbsp;
+				<td class="table-danger" align="center">BALANCE</td>&nbsp;
 				
 			</tr>
 			<tr><td colspan=100%><hr></td></tr>
 			<tr style="color:blue;" ng-repeat="account in data.queryresponse">
-				<td align="center">{{account._ID}}</td>&nbsp;
-				<td align="center">{{account.accountname}}</td>&nbsp;
-				<td align="center">{{account.accountbalance}}</td>&nbsp;
+				<td class="table-primary" align="center">{{account._ID}}</td>&nbsp;
+				<td class="table-success" align="center">{{account.accountname}}</td>&nbsp;
+				<td class="table-danger" align="center">{{account.accountbalance}}</td>&nbsp;
 				
 			</tr>
 			
