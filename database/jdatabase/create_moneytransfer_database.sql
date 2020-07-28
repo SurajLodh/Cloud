@@ -28,4 +28,17 @@ from_account ,
 to_account
 );
 
-
+CREATE TABLE `dbMoneytransfer`.`tevents` (
+  `_id` int NOT NULL AUTO_INCREMENT,
+  `eventid` int NOT NULL,
+  `eventsource` varchar(400) DEFAULT '',
+  `eventdestination` varchar(400) DEFAULT '',
+  `eventdata` json DEFAULT NULL,
+  `eventstatus` int DEFAULT '0',
+  `eventdirection` int DEFAULT '-1',
+  `createdate` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `lastmodifieddate` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `createdby` varchar(255) DEFAULT 'SYS',
+  `lastmodifiedby` varchar(255) DEFAULT 'SYS',
+  PRIMARY KEY (`_id`)
+) ENGINE=InnoDB;
